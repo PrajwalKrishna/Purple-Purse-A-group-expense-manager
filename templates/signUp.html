@@ -1,0 +1,20 @@
+<html>
+Notes: if possible use radio buttons for sex and calendar for date of birth
+   <body>
+
+      <form action = "{{ url_for('addUser') }}" method = "post">
+         <p>Enter Name:</p>
+         <p><input type = "text" name = "nm" /></p>
+         <p>Email:</p>
+         <p><input type = "text" name = "enm" /></p>
+         <p>Sex:</p>
+         <p><input type = "text" name = "sex" /></p>
+         <p>Date of birth:</p>
+         <p><input type = "text" name = "dob" /></p>
+         <p>Password:</p>
+         <p><input type="password" name="password" /></p>
+         <p><input type = "submit" value = "submit" /></p>
+      </form>
+
+   </body>
+</html>
