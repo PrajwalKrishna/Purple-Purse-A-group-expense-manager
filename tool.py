@@ -13,8 +13,11 @@ curr.execute('''create table TRANSACTIONS (
                 amount int not null,
                 comment text,
                 status int default 0,
-                user_id integer not null,
-                FOREIGN KEY(user_id)
+                sender_id integer not null,
+                receiver_id integer not null,
+                FOREIGN KEY(sender_id)
+                    REFERENCES USERS(user_id)
+                FOREIGN KEY(receiver_id)
                     REFERENCES USERS(user_id)
                 )''')
 
