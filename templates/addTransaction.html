@@ -1,0 +1,16 @@
+<html>
+   <body>
+
+      <form action = "{{ url_for('addTransaction') }}" method = "POST">
+         <h3>Add Transaction</h3>
+         Name<br>
+         <input type = "text" name = "nm" /></br>
+         sender_id<br>
+         <input type = "text" name = "sender" /></br>
+         receiver_id<br>
+         <input type = "text" name = 'receiver_id'/></br>
+         amount<br>
+         <input type = "text" name = 'amt'/></br>
+      </form>
+   </body>
+</html>

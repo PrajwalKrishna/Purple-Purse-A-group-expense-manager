@@ -1,0 +1,6 @@
+{%extends 'passbook_base.html' %}
+{% block content %}
+    {% for transaction in transactions%}
+        <h1>{{transaction}}</h1>
+     {% endfor %}
+{% endblock %}

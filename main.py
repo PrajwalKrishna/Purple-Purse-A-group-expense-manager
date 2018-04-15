@@ -1,12 +1,13 @@
 from flask import Flask, redirect, url_for, request,render_template
 app = Flask(__name__)
 from signature import *
+from login import *
 
 @app.route('/success/<name>')
 def success(name):
     return 'welcome %s' % name
 
-@app.route('/addTransaction/')
+@app.route('/addTransaction')
 def new_Transaction():
     if request.method == 'POST':
         try:
@@ -21,9 +22,11 @@ def new_Transaction():
         finally:
             return (redirect(url_for('success',name = msg)))
 
-@app.route('/user/<name>')
-def renderForUser():
-    pass
+@app.route('/users/<user_id>/passbook')
+def renderPassbook(user_id):
+    user_name = findUserByUser_Id(user_id)[1]
+    transactions = findAllTransactionByUser_Id(user_id)
+    return render_template('passbook_maker.html',transactions = transactions,user_name = user_name)
 
 if __name__ == '__main__':
     app.run(debug = True)

@@ -1,5 +1,11 @@
 import sqlite3 as sql
-from login import create_connection
+
+def create_connection(database):
+    try:
+        conn = sql.connect(database)
+        return conn;
+    except:
+        print "Cannot access database"
 
 def insertUser(name,email,password):
     conn = create_connection("database.db")
@@ -13,6 +19,16 @@ def insertUser(name,email,password):
     conn.close()
     return 1
 
+def findUserByUser_Id(id):
+    query = None
+    conn = create_connection("database.db")
+    curr = conn.cursor()
+    curr.execute("SELECT * FROM USERS WHERE user_id is '{}'".format(id))
+    query = curr.fetchone()
+    conn.close()
+    print query
+    return query
+
 def findUserByEmail(email):
     query=None
     conn = create_connection("database.db")
@@ -21,3 +37,11 @@ def findUserByEmail(email):
     query = curr.fetchone()
     conn.close()
     return query
+
+def retrieveUsers():
+	conn = create_connection("database.db")
+	curr = conn.cursor()
+	curr.execute("SELECT name, email,password FROM USERS")
+	users = curr.fetchall()
+	conn.close()
+	return users
