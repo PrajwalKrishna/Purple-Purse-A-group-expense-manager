@@ -7,7 +7,7 @@ def insertTransaction(title,amount,sender_id,receiver_id):
     try:
         curr.execute("INSERT INTO TRANSACTIONS (title,amount,sender_id,receiver_id) VALUES(?,?,?,?)",
                     (title,amount,sender_id,receiver_id))
-    except:
+    except IntegrityError as e:
         return -1
     conn.commit()
     conn.close()
@@ -58,8 +58,8 @@ def retrieveTransactions():
 
 
 if __name__ == '__main__':
-    #insertUser("Prajwal","krishan.com","alphabeta")
-    #insertUser("Bhatt","alia.com","bhatt")
+    #insertUser("Gujju","yam.com","yam")
+    #insertUser("Chaaras","yash.com","yash")
     users=retrieveUsers()
     for i in users:
         print i[0],
@@ -67,8 +67,8 @@ if __name__ == '__main__':
     print findUserByEmail("krishan.com")
     print "Users ahve finished now comes transactions "
     #insertTransaction("first",170,1,3)
-    #insertTransaction("third",200,3,1)
-    transactions = findAllTransactionByUser_Id(1)
+    #insertTransaction("aloo",1200,4,2)
+    transactions = findAllTransactionByUser_Id(2)
     print 'transaction_id    title  amount  sender_id   receiver_id'
     for i in transactions:
         print i[0],

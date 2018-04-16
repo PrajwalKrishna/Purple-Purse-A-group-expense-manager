@@ -9,9 +9,11 @@ def index():
 
 @app.route('/login',methods = ['POST', 'GET'])
 def login():
+
     if request.method == 'POST':
         email = request.form['enm']
         password = request.form['password']
+        password = hasher(password)
         user = findUserByEmail(email)
         if user:
             if str(password) == str(user[3]):
@@ -21,9 +23,18 @@ def login():
         else:
             return (redirect(url_for('success',name = "Error no such user")))
 
+
 @app.route('/signUp')
 def new_student():
    return render_template('signUp.html')
+
+@app.route('/users/<user_id>')
+def renderHome(user_id):
+    user = findUserByUser_Id(user_id)
+    print user
+    return render_template("user_home.html",name=user[1],email=user[2],user_id=user[0],
+                           total_balance=user[4],approved_balance=user[6],unapproved_balance=user[5])
+
 
 @app.route('/addUser',methods = ['POST','GET'])
 def addUser():
@@ -32,9 +43,16 @@ def addUser():
             name = request.form['nm']
             email = request.form['enm']
             password = request.form['password']
-            insertUser(name,email,password)
+            verify = insertUser(name,email,password)
             msg = "Added successfully"
         except:
-            msg = "Unsuccessful"
+            msg = "Unsuccessful try again later"
         finally:
-            return (redirect(url_for('success',name = msg)))
+            if verify is 1:
+             return (redirect(url_for('success',name = msg)))
+            else:
+              return (redirect(url_for('success',name = "Account for Email already exist")))
+
+#if __name__ == '__main__':
+#    renderHome(1)
+#    pass

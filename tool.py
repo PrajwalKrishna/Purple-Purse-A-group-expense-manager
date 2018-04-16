@@ -5,7 +5,10 @@ curr.execute('''create table USERS (
                   user_id integer primary key autoincrement,
                   name text not null,
                   email text not null unique,
-                  password text not null)''')
+                  password text not null,
+                  total_balance interger default 0,
+                  unapproved_balance integer default 0,
+                  approved_balance integer default 0)''')
 
 curr.execute('''create table TRANSACTIONS (
                 transaction_id integer primary key autoincrement,
@@ -20,6 +23,7 @@ curr.execute('''create table TRANSACTIONS (
                 FOREIGN KEY(receiver_id)
                     REFERENCES USERS(user_id)
                 )''')
+
 
 #curr.execute('''create table
  #            ''')

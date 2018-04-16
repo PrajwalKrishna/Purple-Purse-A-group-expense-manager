@@ -1,4 +1,5 @@
 import sqlite3 as sql
+import hashlib
 
 def create_connection(database):
     try:
@@ -7,11 +8,17 @@ def create_connection(database):
     except:
         print "Cannot access database"
 
+def hasher(password):
+    password_en = password.encode()
+    hashed = hashlib.sha384(password_en)
+    hash_paso = hashed.hexdigest()
+    return hash_paso
+
 def insertUser(name,email,password):
     conn = create_connection("database.db")
     curr = conn.cursor()
     try:
-        curr.execute("INSERT INTO USERS (name,email,password) VALUES(?,?,?)",(name,email,password))
+        curr.execute("INSERT INTO USERS (name,email,password) VALUES(?,?,?)",(name,email,hasher(password)))
     except sql.IntegrityError as e:
         print("Account already exists")
         return 0
@@ -26,7 +33,6 @@ def findUserByUser_Id(id):
     curr.execute("SELECT * FROM USERS WHERE user_id is '{}'".format(id))
     query = curr.fetchone()
     conn.close()
-    print query
     return query
 
 def findUserByEmail(email):
