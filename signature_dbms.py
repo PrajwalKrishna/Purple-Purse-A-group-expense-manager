@@ -21,10 +21,10 @@ def insertUser(name,email,password):
         curr.execute("INSERT INTO USERS (name,email,password) VALUES(?,?,?)",(name,email,hasher(password)))
     except sql.IntegrityError as e:
         print("Account already exists")
-        return 0
+        return None
     conn.commit()
     conn.close()
-    return 1
+    return email
 
 def findUserByUser_Id(id):
     query = None

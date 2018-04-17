@@ -17,7 +17,7 @@ def login():
         user = findUserByEmail(email)
         if user:
             if str(password) == str(user[3]):
-                return (redirect(url_for('success',name=user[1])))
+                return (redirect(("/users/{}").format(user[0])))
             else:
                 return (redirect(url_for('success',name="sahi password de "+str(user[3])+str(password))))
         else:
@@ -31,25 +31,28 @@ def new_student():
 @app.route('/users/<user_id>')
 def renderHome(user_id):
     user = findUserByUser_Id(user_id)
-    print user
     return render_template("user_home.html",name=user[1],email=user[2],user_id=user[0],
                            total_balance=user[4],approved_balance=user[6],unapproved_balance=user[5])
 
 
 @app.route('/addUser',methods = ['POST','GET'])
 def addUser():
+    verify = None
     if request.method == 'POST':
         try:
             name = request.form['nm']
             email = request.form['enm']
             password = request.form['password']
+            print "hallo boys"
+            print name,email,password
             verify = insertUser(name,email,password)
             msg = "Added successfully"
         except:
             msg = "Unsuccessful try again later"
         finally:
-            if verify is 1:
-             return (redirect(url_for('success',name = msg)))
+            if verify is not None:
+                user = findUserByEmail(email)
+                return (redirect(("/users/{}").format(user[0])))
             else:
               return (redirect(url_for('success',name = "Account for Email already exist")))
 
