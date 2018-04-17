@@ -1,0 +1,21 @@
+<head>Dashboard</head>
+<body>
+<h1>Name : {{name}}'s </h1>
+<h1>Email : {{email}}'s</h1>
+<h1>Total Balance : {{total_balance}}</h1>
+<h1>Approved Balance : {{approved_balance}}</h1>
+<h1>Unapproved Balance :{{unapproved_balance}}</h1>
+<a href="/users/{{user_id}}/passbook">passbook</a>
+<a href="/users/{{user_id}}/userAddTransaction">Add transaction</a>
+<h1>Friends</h1>
+{% for i in friendList %}
+<p>{{i}}</p>
+{% endfor %}
+<hr />
+<form action = "{{ url_for('addFriends',user_id=user_id) }}" method = "post">
+    <p>
+        <input type="text" name = "friend" value = "enter email"/>
+        <input type = "submit" value = "submit" />
+    </p>
+</form>
+</body>

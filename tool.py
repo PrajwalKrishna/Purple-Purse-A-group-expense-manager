@@ -1,6 +1,9 @@
 import sqlite3 as sql
 conn = sql.connect("database.db")
 curr = conn.cursor()
+curr.execute('''
+             PRAGMA foreign_key = ON
+             ''')
 curr.execute('''create table USERS (
                   user_id integer primary key autoincrement,
                   name text not null,
@@ -8,7 +11,8 @@ curr.execute('''create table USERS (
                   password text not null,
                   total_balance interger default 0,
                   unapproved_balance integer default 0,
-                  approved_balance integer default 0)''')
+                  approved_balance integer default 0,
+                  friends text default " ")''')
 
 curr.execute('''create table TRANSACTIONS (
                 transaction_id integer primary key autoincrement,

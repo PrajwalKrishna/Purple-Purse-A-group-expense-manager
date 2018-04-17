@@ -15,6 +15,30 @@ def insertTransaction(title,amount,sender_id,receiver_id):
     #    return -1
     return 1
 
+
+def insertFriend(user_id,friend_id):
+    friends = findFriends(user_id)
+    flag = 1
+    for i in friends:
+        if str(i) == str(friend_id):
+            flag = 0
+    if user_id == friend_id:
+        flag = 0
+    if flag:
+        friends.append(friend_id)
+        posx=[]
+        for i in friends:
+            posx.append(str(i))
+        print("VHGJVJHHBJ\n")
+        print(friends)
+        friendList = ','.join(posx)
+        print(friendList)
+        conn = create_connection("database.db")
+        curr = conn.cursor()
+        curr.execute(("UPDATE USERS SET friends='{0}' WHERE user_id ='{1}'").format(friendList,user_id))
+        conn.commit()
+        conn.close()
+
 def deleteTransaction(transaction_id):
     conn = create_connection("database.db")
     curr = conn.cursor()
@@ -32,11 +56,10 @@ def addToUserTotal(user_id,amount):
         curr = conn.cursor()
         total = user[4]+amount
         curr.execute(("UPDATE USERS SET total_balance='{0}' WHERE user_id='{1}'").format(total,user_id))
-        print 'success',total
         conn.commit()
         conn.close()
     else:
-        print 'Unsuccessful'
+        print ('Unsuccessful')
 
 def findAllTransactionByUser_Id(user_id):
     query = []
@@ -76,19 +99,22 @@ def retrieveTransactions():
 if __name__ == '__main__':
     #insertUser("Gujju","yam.com","yam")
     #insertUser("Chaaras","yash.com","yash")
+    #insertUser("Prajwal","Prajwal.com","Prajwal")
+    #insertUser("qwerty","qwerty.com","qwerty")
+    #insertUser("Harry","Harry.com","Harry")
+    #insertFriend(3,2)
     users=retrieveUsers()
     for i in users:
-        print i[0],
-        print ':'+i[1]
-    print findUserByEmail("krishan.com")
-    print "Users ahve finished now comes transactions "
+        print (i[0],':'+i[1])
+    print (findUserByEmail("krishan.com"))
+    print ("Users ahve finished now comes transactions ")
     #insertTransaction("first",170,1,3)
     #insertTransaction("aloo",1200,4,2)
+    #insertTransaction("pak",561,5,2)
     transactions = retrieveTransactions()
-    print 'transaction_id    title  amount  sender_id   receiver_id'
+    print ('transaction_id    title  amount  sender_id   receiver_id')
     for i in transactions:
-        print i[0],
-        print '     '+i[1]+'    ',
-        print i[2],
-        print i[5],
-        print i[6]
+        for j in i:
+            print '.',
+            print j,
+        print ""

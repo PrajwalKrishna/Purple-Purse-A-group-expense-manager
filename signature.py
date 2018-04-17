@@ -1,5 +1,5 @@
 from signature_dbms import *
-from flask import Flask,render_template,redirect,request,url_for
+from flask import Flask,render_template,redirect,request,url_for,session
 
 app = Flask(__name__)
 
@@ -9,7 +9,6 @@ def index():
 
 @app.route('/login',methods = ['POST', 'GET'])
 def login():
-
     if request.method == 'POST':
         email = request.form['enm']
         password = request.form['password']
@@ -17,6 +16,8 @@ def login():
         user = findUserByEmail(email)
         if user:
             if str(password) == str(user[3]):
+                #session['logged_in'] = True
+                #session['user_id'] =
                 return (redirect(("/users/{}").format(user[0])))
             else:
                 return (redirect(url_for('success',name="sahi password de "+str(user[3])+str(password))))
@@ -32,7 +33,7 @@ def new_student():
 def renderHome(user_id):
     user = findUserByUser_Id(user_id)
     return render_template("user_home.html",name=user[1],email=user[2],user_id=user[0],
-                           total_balance=user[4],approved_balance=user[6],unapproved_balance=user[5])
+                           total_balance=user[4],approved_balance=user[6],unapproved_balance=user[5],friendList=findFriends(user_id))
 
 
 @app.route('/addUser',methods = ['POST','GET'])
@@ -43,8 +44,7 @@ def addUser():
             name = request.form['nm']
             email = request.form['enm']
             password = request.form['password']
-            print "hallo boys"
-            print name,email,password
+            print (name,email,password)
             verify = insertUser(name,email,password)
             msg = "Added successfully"
         except:
@@ -55,7 +55,3 @@ def addUser():
                 return (redirect(("/users/{}").format(user[0])))
             else:
               return (redirect(url_for('success',name = "Account for Email already exist")))
-
-#if __name__ == '__main__':
-#    renderHome(1)
-#    pass

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from flask import Flask, redirect, url_for, request,render_template
 app = Flask(__name__)
 from signature import *
@@ -9,13 +10,11 @@ def success(name):
 
 @app.route('/users/<user_id>/userAddTransaction')
 def addTransaction(user_id):
-    print 'hello world'
-    print user_id
     return render_template('addTransaction.html')
+
 
 @app.route('/addTransactionToData',methods = ['POST','GET'])
 def addTransactionToData():
-    print "hi there is hope left"
     if request.method == 'POST':
         #try:
             name = request.form['nm']
@@ -28,6 +27,16 @@ def addTransactionToData():
         #    msg = "Unsuccessful"
         #finally:
             return (redirect(url_for('success',name = msg)))
+
+@app.route('/<user_id>/addFriends',methods = ['POST','GET'])
+def addFriends(user_id):
+    if request.method == 'POST':
+        name = request.form['friend']
+        user = findUserByEmail(name)
+        if user:
+            friend_id = user[0]
+            insertFriend(user_id,friend_id)
+    return redirect(url_for('renderHome',user_id = user_id))
 
 @app.route('/users/<user_id>/passbook')
 def renderPassbook(user_id):
