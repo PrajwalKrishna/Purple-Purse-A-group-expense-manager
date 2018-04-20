@@ -17,7 +17,7 @@ def login():
         if user:
             if str(password) == str(user[3]):
                 #session['logged_in'] = True
-                #session['user_id'] =
+                #session['user_id'] =  user[0]
                 return (redirect(("/users/{}").format(user[0])))
             else:
                 return (redirect(url_for('success',name="sahi password de "+str(user[3])+str(password))))

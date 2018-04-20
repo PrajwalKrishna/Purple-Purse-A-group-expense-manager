@@ -2,19 +2,24 @@ import sqlite3 as sql
 from signature_dbms import *
 
 def insertTransaction(title,amount,sender_id,receiver_id):
-    conn = create_connection("database.db")
-    curr = conn.cursor()
-    #try:
-    curr.execute("INSERT INTO TRANSACTIONS (title,amount,sender_id,receiver_id) VALUES(?,?,?,?)",
-                (title,amount,sender_id,receiver_id))
-    conn.commit()
-    conn.close()
-    addToUserTotal(sender_id,amount*-1)
-    addToUserTotal(receiver_id,amount)
-    #except IntegrityError as e:
-    #    return -1
-    return 1
-
+        flag = 1
+        if not findUserByUser_Id(sender_id):
+            flag = 0
+        if not findUserByUser_Id(receiver_id):
+            flag = -1
+        if sender_id==receiver_id:
+            return flag
+        if (flag == 1):
+            conn = create_connection("database.db")
+            curr = conn.cursor()
+            curr.execute("PRAGMA foreign_keys=ON;")
+            curr.execute("INSERT INTO TRANSACTIONS (title,amount,sender_id,receiver_id) VALUES(?,?,?,?)",
+                        (title,amount,sender_id,receiver_id))
+            conn.commit()
+            conn.close()
+            addToUserTotal(sender_id,amount*-1)
+            addToUserTotal(receiver_id,amount)
+        return flag
 
 def insertFriend(user_id,friend_id):
     friends = findFriends(user_id)
@@ -29,8 +34,6 @@ def insertFriend(user_id,friend_id):
         posx=[]
         for i in friends:
             posx.append(str(i))
-        print("VHGJVJHHBJ\n")
-        print(friends)
         friendList = ','.join(posx)
         print(friendList)
         conn = create_connection("database.db")
@@ -95,6 +98,60 @@ def retrieveTransactions():
 	conn.close()
 	return users
 
+def addNewGroup(name):
+    conn = create_connection("database.db")
+    curr = conn.cursor()
+    curr.execute("INSERT INTO GROUPS (name) VALUES(?)",(name))
+    conn.commit()
+    curr.execute("SELECT SCOPE_INDENTITY()")
+    group = curr.fetchone()
+    conn.close()
+    return group
+
+def addMember(group_id,user_id):
+    conn = create_connection("database.db")
+    curr = conn.cursor()
+    curr.execute("PRAGMA foreign_keys=ON;")
+    curr.execute("INSERT INTO MEMEBERSHIP (group_id,user_id) VALUES(?,?)",
+                (group_id,user_id))
+    conn.commit()
+    conn.close()
+
+def findAllMembersForGroup(group_id):
+    members = []
+    conn = create_connection("database.db")
+    curr = conn.cursor()
+    curr.execute("SELECT * FROM MEMEBERSHIP WHERE(group_id) IS '{0}'".format(group_id))
+    members = curr.fetchall()
+    conn.commit()
+    conn.close()
+    return members
+
+def findAllGroupsForUser(user_id):
+    groups = []
+    conn = create_connection("database.db")
+    curr = conn.cursor()
+    curr.execute("SELECT * FROM MEMEBERSHIP WHERE(user_id) IS '{0}'".format(user_id))
+    groups = curr.fetchall()
+    conn.commit()
+    conn.close()
+    return groups
+
+
+def makeGroupTransaction(title,group_id,payer_id,amount):
+    conn = create_connection("database.db")
+    curr = conn.cursor()
+    curr.execute("PRAGMA foreign_keys=ON;")
+    curr.execute("INSERT INTO GROUPTRANSACTIONS (title,group_id,payer_id,amount) VALUES(?,?,?,?)",
+                 (title,group_id,payer_id,amount))
+    conn.commit()
+    conn.close()
+    members = findAllMembersForGroup(group_id)
+    divisions = len(members)
+    dividends = amount/divisions
+    for i in members:
+        insertTransaction(title,dividends,i[1],payer_id)
+
 
 if __name__ == '__main__':
     #insertUser("Gujju","yam.com","yam")
@@ -113,8 +170,8 @@ if __name__ == '__main__':
     #insertTransaction("pak",561,5,2)
     transactions = retrieveTransactions()
     print ('transaction_id    title  amount  sender_id   receiver_id')
-    for i in transactions:
-        for j in i:
-            print '.',
-            print j,
-        print ""
+    #for i in transactions:
+    #    for j in i:
+    #        print '.',
+    #        print j,
+    #   print ""

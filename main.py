@@ -12,21 +12,21 @@ def success(name):
 def addTransaction(user_id):
     return render_template('addTransaction.html')
 
-
 @app.route('/addTransactionToData',methods = ['POST','GET'])
 def addTransactionToData():
     if request.method == 'POST':
-        #try:
-            name = request.form['nm']
-            sender_id = int(request.form['sender'])
-            receiver_id = int(request.form['receiver'])
-            amount = int(request.form['amt'])
-            insertTransaction(name,amount,sender_id,receiver_id)
-            msg = "Added successfully"
-        #except:
-        #    msg = "Unsuccessful"
-        #finally:
-            return (redirect(url_for('success',name = msg)))
+        name = request.form['nm']
+        sender_id = int(request.form['sender'])
+        receiver_id = int(request.form['receiver'])
+        amount = int(request.form['amt'])
+        return_value = insertTransaction(name,amount,sender_id,receiver_id)
+        if return_value is 1:
+            msg = 'success'
+        elif return_value is -1:
+            msg = 'sender_id does not exist'
+        else:
+            msg = 'receiver_id does not exist'
+        return (redirect(url_for('success',name = msg)))
 
 @app.route('/<user_id>/addFriends',methods = ['POST','GET'])
 def addFriends(user_id):
@@ -43,6 +43,13 @@ def renderPassbook(user_id):
     user_name = findUserByUser_Id(user_id)[1]
     transactions = findAllTransactionByUser_Id(user_id)
     return render_template('passbook_maker.html',transactions = transactions,user_name = user_name)
+
+@app.route('/group',methods = ['POST','GET'])
+def makeGroup():
+    if method == 'POST':
+        name = request.form['name']
+        addNewGroup(name)
+        return render_template('group_base.html',name = 'name')
 
 if __name__ == '__main__':
     app.run(debug = True)
