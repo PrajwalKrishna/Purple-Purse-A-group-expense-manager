@@ -137,21 +137,86 @@ def findAllGroupsForUser(user_id):
     conn.close()
     return groups
 
-
-def makeGroupTransaction(title,group_id,payer_id,amount):
+def findAllTransactionsForGroup(group_id):
+    transactions = []
     conn = create_connection("database.db")
     curr = conn.cursor()
-    curr.execute("PRAGMA foreign_keys=ON;")
-    curr.execute("INSERT INTO GROUPTRANSACTIONS (title,group_id,payer_id,amount) VALUES(?,?,?,?)",
-                 (title,group_id,payer_id,amount))
+    curr.execute("SELECT * FROM GROUPTRANSACTIONS WHERE(group_id) IS '{0}'".format(group_id))
+    transactions = curr.fetchall()
     conn.commit()
     conn.close()
+    return transactions
+
+def findGroupTransactionById(groupTransaction_id):
+    transaction = []
+    conn = create_connection("database.db")
+    curr = conn.cursor()
+    curr.execute("SELECT * FROM GROUPTRANSACTIONS WHERE(groupTransaction_id) IS '{0}'".format(groupTransaction_id))
+    transaction = curr.fetchone()
+    conn.commit()
+    conn.close()
+    return transaction
+
+def makeGroupTransaction(title,amount,group_id,payer_id):
+    conn = create_connection("database.db")
+    curr = conn.cursor()
+    curr.execute("PRAGMA foreign_keys=ON")
+    curr.execute("INSERT INTO GROUPTRANSACTIONS (title,group_id,payer_id,amount) VALUES(?,?,?,?)",
+                 (title,group_id,payer_id,amount))
+    curr.execute("SELECT SCOPE_INDENTITY()")
+    newGroupTransaction = curr.fetchone()
+    newGroupTransaction_id = newGroupTransaction[0]
+    conn.commit()
+    conn.close()
+    return newGroupTransaction_id
+
+def payEqualGroupTransaction(GroupTransaction_id):
+    groupTransaction = findGroupTransactionById(groupTransaction_id)
+    title = groupTransaction[1]
+    amount = groupTransaction[2]
+    group_id = groupTransaction[3]
+    payer_id = groupTransaction[4]
     members = findAllMembersForGroup(group_id)
     divisions = len(members)
     dividends = amount/divisions
     for i in members:
         insertTransaction(title,dividends,i[1],payer_id)
 
+def makeShare(share,groupTransaction_id,user_id):
+    conn = create_connection("database.db")
+    curr = conn.cursor()
+    curr.execute("PRAGMA foreign_keys=ON")
+    curr.execute("INSERT INTO SHARES (share,groupTransaction_id,user_id) VALUES(?,?,?)",
+                 (share,groupTransaction_id,user_id))
+    conn.commit()
+    conn.close()
+
+def findShare(groupTransaction_id,user_id):
+    conn = create_connection("database.db")
+    curr = conn.cursor()
+    share = []
+    curr.execute("SELECT * FROM SHARES WHERE (groupTransaction_id) IS '{0}' AND (user_id) IS '{1}'".format(groupTransaction_id,user_id))
+    share = curr.fetchone()
+    conn.close()
+    if share:
+        return share[0]
+    else:
+        return 0
+
+def payUnequalGroupTransaction(groupTransaction_id):
+    groupTransaction = findGroupTransactionById(groupTransaction_id)
+    title = groupTransaction[1]
+    amount = groupTransaction[2]
+    group_id = groupTransaction[3]
+    payer_id = groupTransaction[4]
+    members = findAllMembersForGroup(group_id)
+    divisions = 0
+    for i in members:
+        divisions += findShare(groupTransaction_id,i[1])
+    dividends = amount/divisions
+    for i in members:
+        amount = dividends*findShare(groupTransaction_id,i[1])
+        insertTransaction(title,amount,i[1],payer_id)
 
 if __name__ == '__main__':
     #insertUser("Gujju","yam.com","yam")

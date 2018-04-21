@@ -57,15 +57,13 @@ curr.execute('''create table GROUPTRANSACTIONS(
 
 curr.execute('''create table SHARES(
              share integer not null default 1,
-             group_id interger not null,
              user_id interger not null,
              groupTransaction_id integer not null,
              FOREIGN KEY(user_id)
                  REFERENCES USERS(user_id)
-             FOREIGN KEY(group_id)
-                 REFERENCES GROUPS(group_id)
              FOREIGN KEY(groupTransaction_id)
                  REFERENCES GROUPTRANSACTIONS(groupTransaction)
+             UNIQUE KEY ('groupTransaction_id','user_id')
              )''')
 
 curr.close()
