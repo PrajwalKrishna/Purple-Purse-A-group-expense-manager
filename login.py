@@ -108,14 +108,6 @@ def addNewGroup(name):
     conn.close()
     return group_id
 
-def findGroupById(group_id):
-    conn = create_connection("database.db")
-    curr = conn.cursor()
-    curr.execute("SELECT * FROM GROUPS WHERE(group_id) IS '{}'".format(group_id))
-    group = curr.fetchone()
-    conn.close()
-    return group
-
 def makeMember(group_id,user_id):
     conn = create_connection("database.db")
     curr = conn.cursor()
@@ -125,7 +117,17 @@ def makeMember(group_id,user_id):
     conn.commit()
     conn.close()
 
-def findAllMembersForGroup(group_id):
+def findAllMemberIdsForGroup(group_id):
+    member_ids = []
+    conn = create_connection("database.db")
+    curr = conn.cursor()
+    curr.execute("SELECT user_id FROM MEMEBERSHIP WHERE(group_id) IS '{0}'".format(group_id))
+    member_ids = curr.fetchall()
+    conn.commit()
+    conn.close()
+    return member_ids
+
+def findAllMembersForGroupHomeRendering(group_id):
     member_ids = []
     members = []
     conn = create_connection("database.db")
@@ -159,18 +161,36 @@ def findGroupTransactionById(groupTransaction_id):
     conn.close()
     return transaction
 
-def makeGroupTransaction(title,amount,group_id,payer_id):
+def makeGroupTransaction(title,group_id):
     conn = create_connection("database.db")
     curr = conn.cursor()
     curr.execute("PRAGMA foreign_keys=ON")
-    curr.execute("INSERT INTO GROUPTRANSACTIONS (title,group_id,payer_id,amount) VALUES(?,?,?,?)",
-                 (title,group_id,payer_id,amount))
-    curr.execute("SELECT SCOPE_INDENTITY()")
+    curr.execute("INSERT INTO GROUPTRANSACTIONS (title,group_id) VALUES(?,?)",
+                 (title,group_id))
+    curr.execute("SELECT last_insert_rowid()")
     newGroupTransaction = curr.fetchone()
     newGroupTransaction_id = newGroupTransaction[0]
     conn.commit()
     conn.close()
     return newGroupTransaction_id
+
+def addPayerToGroupTransaction(group_id,payer_id,amount):
+    conn = create_connection("database.db")
+    curr = conn.cursor()
+    curr.execute("INSERT INTO GROUPTRANSACTIONS_PAYERS (group_id,payer_id,amount) VALUES(?,?,?)",
+                 (group_id,payer_id,amount))
+    conn.commit()
+    conn.close()
+
+def findAllPayerForGroupTransaction(groupTransaction_id):
+    payers = []
+    conn = create_connection("database.db")
+    curr = conn.cursor()
+    curr.execute("SELECT payer_id,amount FROM GROUPTRANSACTIONS_PAYERS WHERE (groupTransaction_id) IS '{0}'".format(groupTransaction_id))
+    payers = curr.fetchall()
+    conn.commit()
+    conn.close()
+    return payers
 
 def payEqualGroupTransaction(GroupTransaction_id):
     groupTransaction = findGroupTransactionById(groupTransaction_id)
@@ -224,7 +244,7 @@ def retrieveGroups():
     groups = []
     conn = create_connection("database.db")
     curr = conn.cursor()
-    curr.execute("SELECT * FROM MEMEBERSHIP")
+    curr.execute("SELECT * FROM GROUPS")
     groups = curr.fetchall()
     conn.close()
     return groups

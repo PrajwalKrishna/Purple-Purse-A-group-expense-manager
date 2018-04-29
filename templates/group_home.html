@@ -1,0 +1,64 @@
+<head>Dashboard</head>
+<body>
+<h1>Name : {{name}} </h1>
+<h1>Members</h1>
+<table>
+<tr>
+    <th>Name</th>
+    <th>Email</th>
+    <th>Balance</th>
+    <th>Details</th>
+</tr>
+{% for i in memberList %}
+<tr>
+    {% for j in i %}
+        <td>
+            {{j}}
+        </td>
+    {% endfor %}
+    <td>
+        <a href="/details">details</a>
+    </td>
+</tr>
+{% endfor %}
+</table>
+<p>
+    Add members
+    <form action="{{url_for('establishMembership') }}" method="POST">
+        <input type="text" name="email"/>
+        <input type="hidden" name="group_id" value={{group_id}}>
+        <input type="submit" value="submit" />
+    </form>
+</p>
+<hr/>
+<h1>Transactions</h1>
+<table>
+<tr>
+    <th>Name</th>
+    <th>Amount</th>
+    <th>Paid By</th>
+    <th>Details</th>
+</tr>
+{% for i in transactionList %}
+<tr>
+    {% for j in i %}
+        <td>
+            {{j}}
+        </td>
+    {% endfor %}
+    <td>
+        <a href="/details">details</a>
+    </td>
+</tr>
+{% endfor %}
+</table>
+<hr/>
+<h3>Add new transaction:</h3>
+<form action = "{{url_for('addGroupTransaction')}}" method = 'POST'>
+    <p>
+        <input type = "text" name = "groupTransactionName"/>
+        <input type = "hidden" name = "group_id" value={{group_id}} />
+        <input type="submit"/>
+    </p>
+</form>
+</body>

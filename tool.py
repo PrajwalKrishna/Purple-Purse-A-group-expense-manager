@@ -48,14 +48,21 @@ curr.execute('''create table MEMEBERSHIP(
 curr.execute('''create table GROUPTRANSACTIONS(
              groupTransaction_id integer primary key autoincrement,
              title text not null,
-             amount integer default 0,
              group_id integer not null,
-             payer_id integer not null,
-             FOREIGN KEY(payer_id)
-                 REFERENCES USERS(user_id)
+             amount integer default 0,
              FOREIGN KEY(group_id)
                  REFERENCES GROUPS(group_id)
             )''')
+
+curr.execute('''create table GROUPTRANSACTIONS_PAYERS(
+             groupTransaction_id integer not null,
+             payer_id integer not null,
+             amount integer default 0,
+             FOREIGN KEY(payer_id)
+                REFERENCES USERS(user_id)
+             FOREIGN KEY(groupTransaction_id)
+                REFERENCES GROUPTRANSACTIONS(groupTransaction_id)
+             )''')
 
 curr.execute('''create table SHARES(
              share integer not null default 1,

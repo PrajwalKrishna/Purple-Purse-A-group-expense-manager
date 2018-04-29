@@ -1,0 +1,50 @@
+<html>
+<head><title>Group Transaction</title></head>
+<body>
+    <h2>Add new Group Transaction</h2>
+    <h1>{{name}}</h1>
+    <h2>Paid by</h2>
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Amount</th>
+        </tr>
+        {% for i in payerList %}
+            <tr>
+                {% for j in i %}
+                    <td>{{j}}</td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </table>
+    <hr/>
+    <h3>Add Payer</h3>
+    <form >
+        Email:
+        <input type="email"/>
+        &nbsp;
+        Amount:
+        <input type="number"/>
+        <input type="submit" value="Add Payer"/>
+    </form>
+    <h3>Members to be added</h3>
+    <form>
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Include</th>
+            </tr>
+            {% for i in memberList %}
+                <tr>
+                    {% for j in i %}
+                        <td>{{j}}</td>
+                    {% endfor %}
+                   <td><input type="checkbox" name =member{{loop.index}}></td>
+                </tr>
+            {% endfor %}
+        </table>
+    </form>
+</body>
+</html>

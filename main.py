@@ -73,8 +73,43 @@ def makeGroup():
 @app.route('/group/<group_id>')
 def renderGroup(group_id):
     group = findGroupById(group_id)
-    members = findAllMembersForGroup(group_id)
+    members = findAllMembersForGroupHomeRendering(group_id)
     return render_template("group_home.html",name = group[2],memberList = members,group_id = group[0])
+
+@app.route('/groups/addGroupTransaction',methods = ['POST'])
+def addGroupTransaction():
+    name = request.form['groupTransactionName']
+    group_id = request.form['group_id']
+    groupTransaction_id = makeGroupTransaction(name,group_id)
+    member_ids = findAllMemberIdsForGroup(group_id)
+    payer_ids = findAllPayerForGroupTransaction(group_id)
+    members = []
+    payers = []
+    for i in member_ids:
+        user = findUserByUser_Id(i[0])
+        members.append([user[1],user[2]])
+    for i in payer_ids:
+        payer = findUserByUser_Id(i[0])
+        payers.append([user[1],user[2],i[1]])
+    members.sort()
+    payers.sort()
+    return render_template("addGroupTransaction.html",memberList = members,name = name ,payerList = payers)
+
+@app.route('/groups/<group_id>/<groupTransaction_id>')
+def renderAddGroupTransaction(group_id,groupTransaction_id):
+    member_ids = findAllMemberIdsForGroup(group_id)
+    payer_ids = findAllPayerForGroupTransaction(group_id)
+    members = []
+    payers = []
+    for i in member_ids:
+        user = findUserByUser_Id(i[0])
+        members.append([user[1],user[2]])
+    for i in payer_ids:
+        payer = findUserByUser_Id(i[0])
+        payers.append([user[1],user[2],i[1]])
+    members.sort()
+    payers.sort()
+    return render_template("addGroupTransaction.html",memberList = members,payerList=payers)
 
 if __name__ == '__main__':
     app.run(debug = True)

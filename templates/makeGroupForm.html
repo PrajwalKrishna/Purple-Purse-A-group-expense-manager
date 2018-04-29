@@ -1,0 +1,15 @@
+<html>
+Notes: if possible use radio buttons for sex and calendar for date of birth
+   <body>
+
+      <form action = "{{ url_for('makeGroup') }}" method = "post">
+         <p>Name:</p>
+         <p><input type = "text" name = "name" /></p>
+         <p>
+             <input type= "hidden" name = "creator"  value={{user}}></h3>
+        </p>
+         <p><input type = "submit" value = "submit" /></p>
+      </form>
+
+   </body>
+</html>

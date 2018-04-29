@@ -80,12 +80,24 @@ def findFriends(user_id):
         friendList.append(toAdd)
     return friendList
 
+def findGroupById(group_id):
+    conn = create_connection("database.db")
+    curr = conn.cursor()
+    curr.execute("SELECT * FROM GROUPS WHERE(group_id) IS '{}'".format(group_id))
+    group = curr.fetchone()
+    conn.close()
+    return group
+
 def findAllGroupsForUser(user_id):
+    group_ids = []
     groups = []
     conn = create_connection("database.db")
     curr = conn.cursor()
-    curr.execute("SELECT user_id,amount FROM MEMEBERSHIP WHERE(user_id) IS '{0}'".format(user_id))
-    groups = curr.fetchall()
+    curr.execute("SELECT group_id,amount FROM MEMEBERSHIP WHERE(user_id) IS '{0}'".format(user_id))
+    group_ids = curr.fetchall()
+    for i in group_ids:
+        group = findGroupById(i[0])
+        groups.append([group[2],i[1]])
     conn.commit()
     conn.close()
     return groups
