@@ -80,31 +80,20 @@ def findFriends(user_id):
         friendList.append(toAdd)
     return friendList
 
+def findAllGroupsForUser(user_id):
+    groups = []
+    conn = create_connection("database.db")
+    curr = conn.cursor()
+    curr.execute("SELECT user_id,amount FROM MEMEBERSHIP WHERE(user_id) IS '{0}'".format(user_id))
+    groups = curr.fetchall()
+    conn.commit()
+    conn.close()
+    return groups
+
 def retrieveUsers():
 	conn = create_connection("database.db")
 	curr = conn.cursor()
-	curr.execute("SELECT name, email,password FROM USERS")
+	curr.execute(" SELECT * FROM USERS")
 	users = curr.fetchall()
 	conn.close()
 	return users
-
-'''
-friends = db.Table('friends',
-db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
-db.Column('friend_id', db.Integer, db.ForeignKey('user.id'))
-)
-
-class User(db.Model):
-   id = db.Column(db.Integer, primary_key = True)
-   name = db.Column(db.String(50), index=True, unique= True)
-   email = db.Column(db.String(50),index=True, unique= True)
-
-
-   is_friend = db.relationship('User', #defining the relationship, User is left side entity
-        secondary = friends,
-        primaryjoin = (friends.c.user_id == id),
-        secondaryjoin = (friends.c.friend_id == id),
-        backref = db.backref('friends', lazy = 'dynamic'),
-        lazy = 'dynamic'
-    )
-'''

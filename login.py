@@ -101,14 +101,22 @@ def retrieveTransactions():
 def addNewGroup(name):
     conn = create_connection("database.db")
     curr = conn.cursor()
-    curr.execute("INSERT INTO GROUPS (name) VALUES(?)",(name))
+    curr.execute("INSERT INTO GROUPS (name) VALUES(?)",[name])
+    curr.execute("SELECT last_insert_rowid()")
+    group_id = curr.fetchone()[0]
     conn.commit()
-    curr.execute("SELECT SCOPE_INDENTITY()")
+    conn.close()
+    return group_id
+
+def findGroupById(group_id):
+    conn = create_connection("database.db")
+    curr = conn.cursor()
+    curr.execute("SELECT * FROM GROUPS WHERE(group_id) IS '{}'".format(group_id))
     group = curr.fetchone()
     conn.close()
     return group
 
-def addMember(group_id,user_id):
+def makeMember(group_id,user_id):
     conn = create_connection("database.db")
     curr = conn.cursor()
     curr.execute("PRAGMA foreign_keys=ON;")
@@ -118,24 +126,18 @@ def addMember(group_id,user_id):
     conn.close()
 
 def findAllMembersForGroup(group_id):
+    member_ids = []
     members = []
     conn = create_connection("database.db")
     curr = conn.cursor()
-    curr.execute("SELECT * FROM MEMEBERSHIP WHERE(group_id) IS '{0}'".format(group_id))
-    members = curr.fetchall()
+    curr.execute("SELECT user_id,amount FROM MEMEBERSHIP WHERE(group_id) IS '{0}'".format(group_id))
+    member_ids = curr.fetchall()
     conn.commit()
     conn.close()
+    for i in member_ids:
+        user = findUserByUser_Id(i[0])
+        members.append([user[1],user[2],i[1]])
     return members
-
-def findAllGroupsForUser(user_id):
-    groups = []
-    conn = create_connection("database.db")
-    curr = conn.cursor()
-    curr.execute("SELECT * FROM MEMEBERSHIP WHERE(user_id) IS '{0}'".format(user_id))
-    groups = curr.fetchall()
-    conn.commit()
-    conn.close()
-    return groups
 
 def findAllTransactionsForGroup(group_id):
     transactions = []
@@ -218,6 +220,15 @@ def payUnequalGroupTransaction(groupTransaction_id):
         amount = dividends*findShare(groupTransaction_id,i[1])
         insertTransaction(title,amount,i[1],payer_id)
 
+def retrieveGroups():
+    groups = []
+    conn = create_connection("database.db")
+    curr = conn.cursor()
+    curr.execute("SELECT * FROM MEMEBERSHIP")
+    groups = curr.fetchall()
+    conn.close()
+    return groups
+
 if __name__ == '__main__':
     #insertUser("Gujju","yam.com","yam")
     #insertUser("Chaaras","yash.com","yash")
@@ -234,9 +245,8 @@ if __name__ == '__main__':
     #insertTransaction("aloo",1200,4,2)
     #insertTransaction("pak",561,5,2)
     transactions = retrieveTransactions()
+    groups = retrieveGroups()
     print ('transaction_id    title  amount  sender_id   receiver_id')
-    #for i in transactions:
-    #    for j in i:
-    #        print '.',
-    #        print j,
-    #   print ""
+    for i in groups:
+        print (i)
+    print ("Hello")

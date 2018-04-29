@@ -13,6 +13,7 @@ def login():
         email = request.form['enm']
         password = request.form['password']
         password = hasher(password)
+        print (email)
         user = findUserByEmail(email)
         if user:
             if str(password) == str(user[3]):
@@ -20,7 +21,8 @@ def login():
                 #session['user_id'] =  user[0]
                 return (redirect(("/users/{}").format(user[0])))
             else:
-                return (redirect(url_for('success',name="sahi password de "+str(user[3])+str(password))))
+                return (redirect(url_for('success',name="sahi password de "+
+                                         str(user[3])+str(password))))
         else:
             return (redirect(url_for('success',name = "Error no such user")))
 
@@ -32,8 +34,10 @@ def new_student():
 @app.route('/users/<user_id>')
 def renderHome(user_id):
     user = findUserByUser_Id(user_id)
-    return render_template("user_home.html",name=user[1],email=user[2],user_id=user[0],
-                           total_balance=user[4],approved_balance=user[6],unapproved_balance=user[5],friendList=findFriends(user_id))
+    return render_template("user_home.html",name=user[1],email=user[2],
+                           user_id=user[0],total_balance=user[4],
+                           approved_balance=user[6],unapproved_balance=user[5],
+                           friendList=findFriends(user_id),groupList=findAllGroupsForUser(user_id))
 
 
 @app.route('/addUser',methods = ['POST','GET'])
@@ -52,6 +56,8 @@ def addUser():
         finally:
             if verify is not None:
                 user = findUserByEmail(email)
+                print ("hi")
                 return (redirect(("/users/{}").format(user[0])))
             else:
-              return (redirect(url_for('success',name = "Account for Email already exist")))
+              return (redirect(url_for('success',name =
+                                       "Account for Email already exist")))

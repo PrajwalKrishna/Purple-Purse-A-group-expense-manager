@@ -9,10 +9,10 @@ curr.execute('''create table USERS (
                   name text not null,
                   email text not null unique,
                   password text not null,
-                  total_balance interger default 0,
+                  total_balance integer default 0,
                   unapproved_balance integer default 0,
                   approved_balance integer default 0,
-                  friends text default " ")''')
+                  friends text default ",")''')
 
 curr.execute('''create table TRANSACTIONS (
                 transaction_id integer primary key autoincrement,
@@ -29,26 +29,28 @@ curr.execute('''create table TRANSACTIONS (
                 )''')
 
 curr.execute('''create table GROUPS(
-             group_id interger primary key autoincrement,
-             name text not null,
+             group_id integer primary key autoincrement,
+             creator_id integer,
+             name text not null
              )''')
 
 curr.execute('''create table MEMEBERSHIP(
-             group_id interger not null,
-             user_id interger not null,
+             group_id integer not null,
+             user_id integer not null,
+             amount integer default 0,
              FOREIGN KEY(user_id)
                  REFERENCES USERS(user_id)
              FOREIGN KEY(group_id)
                  REFERENCES GROUPS(group_id)
-             UNIQUE KEY ('group_id', 'user_id')
+             UNIQUE('group_id', 'user_id')
             )''')
 
 curr.execute('''create table GROUPTRANSACTIONS(
              groupTransaction_id integer primary key autoincrement,
              title text not null,
              amount integer default 0,
-             group_id interger not null,
-             payer_id interger not null,
+             group_id integer not null,
+             payer_id integer not null,
              FOREIGN KEY(payer_id)
                  REFERENCES USERS(user_id)
              FOREIGN KEY(group_id)
@@ -57,13 +59,13 @@ curr.execute('''create table GROUPTRANSACTIONS(
 
 curr.execute('''create table SHARES(
              share integer not null default 1,
-             user_id interger not null,
+             user_id integer not null,
              groupTransaction_id integer not null,
              FOREIGN KEY(user_id)
                  REFERENCES USERS(user_id)
              FOREIGN KEY(groupTransaction_id)
                  REFERENCES GROUPTRANSACTIONS(groupTransaction)
-             UNIQUE KEY ('groupTransaction_id','user_id')
+             UNIQUE ('groupTransaction_id','user_id')
              )''')
 
 curr.close()

@@ -7,12 +7,45 @@
 <h1>Unapproved Balance :{{unapproved_balance}}</h1>
 <a href="/users/{{user_id}}/passbook">passbook</a>
 <a href="/users/{{user_id}}/userAddTransaction">Add transaction</a>
+<a href="/{{user_id}}/makeGroupForm">Form a group</a>
 <h1>Friends</h1>
+<table>
+<tr>
+    <th>Name</th>
+    <th>Email</th>
+    <th>Balance</th>
+    <th>Details</th>
+</tr>
 {% for i in friendList %}
-<p>{{i}}</p>
+<tr>
+    {% for j in i %}
+        <td>
+            {{j}}
+        </td>
+    {% endfor %}
+</tr>
 {% endfor %}
+</table>
 <hr />
-<form action = "{{ url_for('addFriends',user_id=user_id) }}" method = "post">
+<h1>Groups</h1>
+<table>
+<tr>
+    <th>Name</th>
+    <th>Balance</th>
+    <th><a>Details</a></th>
+</tr>
+{% for i in groupList %}
+<tr>
+    {% for j in i %}
+        <td>
+            {{j}}
+        </td>
+    {% endfor %}
+</tr>
+{% endfor %}
+</table>
+<hr/>
+<form action = "{{ url_for('addFriends',user_id = user_id) }}" method = "post">
     <p>
         <input type="text" name = "friend" value = "enter email"/>
         <input type = "submit" value = "submit" />
