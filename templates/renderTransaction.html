@@ -1,0 +1,17 @@
+<h2>Transaction</h2>
+<h2>Name: {{name}}</h2>
+<h2>Amount: {{amount}}</h2>
+<h2>Sender: {{sender}}</h2>
+<h2>Sender Email: {{sender_email}}</h2>
+<h2>Reciever: {{reciver}}</h2>
+<h2>Reciever Email: {{reciver_email}}</h2>
+<h2>Comments: {{comments}}</h2>
+<hr/>
+<h3>Change Comments</h3>
+<form action="{{url_for('addCommentToTransaction')}}" method="POST">
+    <input type = "text" name = "comment" placeholder="Enter new comment"/>
+    <input type = "hidden" name ="transaction_id" value={{transaction_id}} />
+    <input type = "submit" />
+</form>
+<br />
+<a href = '/{{transaction_id}}/deleteTransaction' >Delete Transaction</a>

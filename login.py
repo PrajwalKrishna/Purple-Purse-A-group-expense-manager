@@ -21,6 +21,16 @@ def insertTransaction(title,amount,sender_id,receiver_id):
             addToUserTotal(receiver_id,amount)
         return flag
 
+def findTransactionById(transaction_id):
+    conn = create_connection("database.db")
+    curr = conn.cursor()
+    transaction = []
+    curr.execute("SELECT * FROM TRANSACTIONS WHERE transaction_id = '{}'".format(transaction_id))
+    transaction = curr.fetchone()
+    conn.commit()
+    conn.close()
+    return transaction
+
 def insertFriend(user_id,friend_id):
     friends = findFriends(user_id)
     flag = 1
@@ -43,14 +53,14 @@ def insertFriend(user_id,friend_id):
         conn.close()
 
 def deleteTransaction(transaction_id):
+    transaction = findTransactionById(transaction_id)
     conn = create_connection("database.db")
     curr = conn.cursor()
-    try:
-        curr.execute("DELETE FROM TRANSACTIONS WHERE transaction_id = '{}'".format(transaction_id))
-    except:
-        return 0
+    curr.execute("DELETE FROM TRANSACTIONS WHERE transaction_id = '{}'".format(transaction_id))
     conn.commit()
     conn.close()
+    addToUserTotal(transaction[5],transaction[2]*1)
+    addToUserTotal(transaction[6],transaction[2]*-1)
 
 def addToUserTotal(user_id,amount):
     user = findUserByUser_Id(user_id)
@@ -107,6 +117,13 @@ def addNewGroup(name):
     conn.commit()
     conn.close()
     return group_id
+
+def changeCommentToTransaction(comment,transaction_id):
+    conn = create_connection("database.db")
+    curr = conn.cursor()
+    curr.execute("UPDATE TRANSACTIONS set comment = '{0}' WHERE transaction_id = '{1}'".format(comment,transaction_id))
+    conn.commit()
+    conn.close()
 
 def makeMember(group_id,user_id):
     conn = create_connection("database.db")
@@ -174,11 +191,11 @@ def makeGroupTransaction(title,group_id):
     conn.close()
     return newGroupTransaction_id
 
-def addPayerToGroupTransaction(group_id,payer_id,amount):
+def addPayerToGroupTransaction(groupTransaction_id,payer_id,amount):
     conn = create_connection("database.db")
     curr = conn.cursor()
-    curr.execute("INSERT INTO GROUPTRANSACTIONS_PAYERS (group_id,payer_id,amount) VALUES(?,?,?)",
-                 (group_id,payer_id,amount))
+    curr.execute("INSERT INTO GROUPTRANSACTIONS_PAYERS (groupTransaction_id,payer_id,amount) VALUES(?,?,?)",
+                 (groupTransaction_id,payer_id,amount))
     conn.commit()
     conn.close()
 

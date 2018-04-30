@@ -71,7 +71,7 @@ curr.execute('''create table SHARES(
              FOREIGN KEY(user_id)
                  REFERENCES USERS(user_id)
              FOREIGN KEY(groupTransaction_id)
-                 REFERENCES GROUPTRANSACTIONS(groupTransaction)
+                 REFERENCES GROUPTRANSACTIONS(groupTransaction_id)
              UNIQUE ('groupTransaction_id','user_id')
              )''')
 

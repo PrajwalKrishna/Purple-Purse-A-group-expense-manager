@@ -20,20 +20,21 @@
     </table>
     <hr/>
     <h3>Add Payer</h3>
-    <form >
+
+
+    <form action= "{{url_for('execGroupTransaction')}}" method="POST">
         Email:
-        <input type="email"/>
+        <input type="email" name = "email"/>
         &nbsp;
         Amount:
-        <input type="number"/>
-        <input type="submit" value="Add Payer"/>
-    </form>
-    <h3>Members to be added</h3>
-    <form>
+        <input type="number" name = "amount"/>
+        <input type="hidden" name="groupTransaction_id" value={{groupTransaction_id}} />
+        <h3>Members to be added</h3>
         <table>
             <tr>
                 <th>Name</th>
                 <th>Email</th>
+                <th class = "Sharing">Shares</th>
                 <th>Include</th>
             </tr>
             {% for i in memberList %}
@@ -41,10 +42,13 @@
                     {% for j in i %}
                         <td>{{j}}</td>
                     {% endfor %}
-                   <td><input type="checkbox" name =member{{loop.index}}></td>
+                    <td class = "Sharing"><input type="number" name = "share{{loop.index}}" values=1/></td>
+                   <td><input type="checkbox" name = "member{{loop.index}}"/></td>
                 </tr>
             {% endfor %}
         </table>
+        <input type="submit"/>
+
     </form>
 </body>
 </html>

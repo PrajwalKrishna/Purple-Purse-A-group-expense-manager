@@ -1,6 +1,17 @@
 {%extends 'passbook_base.html' %}
 {% block content %}
-    {% for transaction in transactions%}
-        <h1>{{transaction}}</h1>
-     {% endfor %}
+    {% for i in transactions%}
+    <tr>
+        {% for k in i %}
+            {% if loop.index0==0 %}
+                {% for j in k %}
+                <td>{{j}}</td>
+                {% endfor %}
+            {% else %}
+                <td><a href="/transaction/{{k}}">Details</a></td>
+            {% endif %}
+        {% endfor %}
+    </tr>
+    {% endfor %}
 {% endblock %}
+</table>
