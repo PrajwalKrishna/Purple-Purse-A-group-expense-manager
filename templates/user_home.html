@@ -30,14 +30,18 @@
 <tr>
     <th>Name</th>
     <th>Balance</th>
-    <th><a>Details</a></th>
+    <th>Details</th>
 </tr>
 {% for i in groupList %}
 <tr>
-    {% for j in i %}
-        <td>
-            {{j}}
-        </td>
+    {% for k in i%}
+    {% if loop.index0==0 %}
+        {% for j in k %}
+            <td>{{j}}</td>
+        {% endfor %}
+    {% else %}
+        <td><a href = "/group/{{k}}">Details</a></td>
+    {% endif %}
     {% endfor %}
 </tr>
 {% endfor %}

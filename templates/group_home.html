@@ -11,10 +11,15 @@
 </tr>
 {% for i in memberList %}
 <tr>
-    {% for j in i %}
-        <td>{{j}}</td>
+    {% for k in i %}
+    {% if loop.index0==0 %}
+        {% for j in k %}
+            <td>{{j}}</td>
+        {% endfor %}
+    {% else %}
+        <td><a href="/{{group_id}}/members/{{k}}">details</a></td>
+    {% endif %}
     {% endfor %}
-    <td><a href="/details">details</a></td>
 </tr>
 {% endfor %}
 </table>

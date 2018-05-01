@@ -4,7 +4,7 @@
     <h2>Add new Group Transaction</h2>
     <h1>{{name}}</h1>
     <h2>Paid by</h2>
-    <table>
+    <table id = "dynamic_table">
         <tr>
             <th>Name</th>
             <th>Email</th>
@@ -20,21 +20,39 @@
     </table>
     <hr/>
     <h3>Add Payer</h3>
+    Email:
+    <input  type="email" name = "email" id="email_taker" />
+    Amount:
+    <input  type="integer" name ="amount" id="amount_taker"/>
+    <button onclick = "makePasso()">Add Payer</button>
+    <script>
+    function makePasso()
+    {
+        email = document.getElementById('email_taker').value;
+        amount = document.getElementById('amount_taker').value;
+        email_passo = document.getElementById('email_passer').value;
+        amount_passo = document.getElementById('amount_passer').value;
+        email_passo = email_passo+'('+email+'#'+ amount +')';
+        amount_passo = amount_passo - ( 0 - amount);
+        document.getElementById('email_passer').value = email_passo;
+        document.getElementById('amount_passer').value = amount_passo;
+        base = document.getElementById('dynamic_table').innerHTML;
+        console.log(base);
+        base + '<tr><td>'+toString(email)+'</td><td>'+toString(amount)+'</td></tr>';
+        document.getElementById('dynamic_table').innerHTML = base;
 
-
+    }
+    </script>
     <form action= "{{url_for('execGroupTransaction')}}" method="POST">
-        Email:
-        <input type="email" name = "email"/>
-        &nbsp;
-        Amount:
-        <input type="number" name = "amount"/>
+        <input  type="hidden" name = "email_passer" value="" id="email_passer"/>
+        <input type="hidden" name = "amount_passer" value=0 id="amount_passer"/>
         <input type="hidden" name="groupTransaction_id" value={{groupTransaction_id}} />
         <h3>Members to be added</h3>
         <table>
             <tr>
                 <th>Name</th>
                 <th>Email</th>
-                <th class = "Sharing">Shares</th>
+                <th class = "Sharing" style = "visibility:hidden;">Shares</th>
                 <th>Include</th>
             </tr>
             {% for i in memberList %}
@@ -42,13 +60,24 @@
                     {% for j in i %}
                         <td>{{j}}</td>
                     {% endfor %}
-                    <td class = "Sharing"><input type="number" name = "share{{loop.index}}" values=1/></td>
+                    <td class = "Sharing" style = "visibility:hidden;"><input type="number" name = "share{{loop.index}}" values=1></td>
                    <td><input type="checkbox" name = "member{{loop.index}}"/></td>
                 </tr>
             {% endfor %}
         </table>
+        <hr />
         <input type="submit"/>
-
     </form>
+    <button onclick = "unEqual()">Unequal Splitting</button>
+    <script>
+    function unEqual()
+    {
+        var loop = document.getElementsByClassName('Sharing');
+        for(i=0;i<loop.length;i++)
+        {
+            loop[i].style.visibility='visible';
+        }
+    }
+    </script>
 </body>
 </html>

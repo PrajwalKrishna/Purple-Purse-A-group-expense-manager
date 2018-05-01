@@ -52,6 +52,16 @@ def insertFriend(user_id,friend_id):
         conn.commit()
         conn.close()
 
+def addToMembershipAmount(user_id,group_id,amount):
+    conn = create_connection("database.db")
+    curr = conn.cursor()
+    curr.execute("SELECT amount FROM MEMEBERSHIP WHERE user_id=='{0}' AND group_id=='{1}'".format(user_id,group_id))
+    old_amount = curr.fetchone()[0]
+    amount = old_amount + int(amount)
+    curr.execute("UPDATE MEMEBERSHIP SET amount='{0}' WHERE user_id=='{1}' AND group_id=='{2}'".format(amount,user_id,group_id))
+    conn.commit()
+    conn.close()
+
 def deleteTransaction(transaction_id):
     transaction = findTransactionById(transaction_id)
     conn = create_connection("database.db")
@@ -155,18 +165,28 @@ def findAllMembersForGroupHomeRendering(group_id):
     conn.close()
     for i in member_ids:
         user = findUserByUser_Id(i[0])
-        members.append([user[1],user[2],i[1]])
+        members.append([[user[1],user[2],i[1]],i[0]])
     return members
 
 def findAllTransactionsForGroup(group_id):
     transactions = []
     conn = create_connection("database.db")
     curr = conn.cursor()
-    curr.execute("SELECT * FROM GROUPTRANSACTIONS WHERE(group_id) IS '{0}'".format(group_id))
+    curr.execute("SELECT title,amount FROM GROUPTRANSACTIONS WHERE(group_id) IS '{0}'".format(group_id))
     transactions = curr.fetchall()
     conn.commit()
     conn.close()
     return transactions
+
+def addToGroupTransactionAmount(groupTransaction_id,amount):
+    conn = create_connection("database.db")
+    curr = conn.cursor()
+    curr.execute("SELECT amount FROM GROUPTRANSACTIONS WHERE(groupTransaction_id) IS '{0}'".format(groupTransaction_id))
+    old_amount = curr.fetchone()[0]
+    new_amount = int(old_amount) + int(amount)
+    curr.execute("UPDATE GROUPTRANSACTIONS SET amount ='{0}' WHERE(groupTransaction_id) IS '{1}'".format(new_amount,groupTransaction_id))
+    conn.commit()
+    conn.close()
 
 def findGroupTransactionById(groupTransaction_id):
     transaction = []
@@ -224,11 +244,16 @@ def payEqualGroupTransaction(GroupTransaction_id):
 def makeShare(share,groupTransaction_id,user_id):
     conn = create_connection("database.db")
     curr = conn.cursor()
+    flag = 0
     curr.execute("PRAGMA foreign_keys=ON")
-    curr.execute("INSERT INTO SHARES (share,groupTransaction_id,user_id) VALUES(?,?,?)",
+    try:
+        curr.execute("INSERT INTO SHARES (share,groupTransaction_id,user_id) VALUES(?,?,?)",
                  (share,groupTransaction_id,user_id))
+    except:
+        flag = 1
     conn.commit()
     conn.close()
+    return flag
 
 def findShare(groupTransaction_id,user_id):
     conn = create_connection("database.db")

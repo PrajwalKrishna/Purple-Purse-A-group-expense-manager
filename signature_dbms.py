@@ -40,7 +40,7 @@ def findUserByEmail(email):
     query=None
     conn = create_connection("database.db")
     curr = conn.cursor()
-    curr.execute("SELECT * FROM USERS WHERE email = '{}'".format(email))
+    curr.execute("SELECT * FROM USERS WHERE email is '{}'".format(email))
     query = curr.fetchone()
     conn.close()
     return query
@@ -97,7 +97,7 @@ def findAllGroupsForUser(user_id):
     group_ids = curr.fetchall()
     for i in group_ids:
         group = findGroupById(i[0])
-        groups.append([group[2],i[1]])
+        groups.append([[group[2],i[1]],i[0]])
     conn.commit()
     conn.close()
     return groups

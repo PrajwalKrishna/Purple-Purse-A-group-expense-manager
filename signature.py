@@ -2,6 +2,7 @@ from signature_dbms import *
 from flask import Flask,render_template,redirect,request,url_for,session
 
 app = Flask(__name__)
+app.secret_key = 'MKhJHJH798798kjhkjhkjGHh'
 
 @app.route('/signIn')
 def index():
@@ -17,8 +18,8 @@ def login():
         user = findUserByEmail(email)
         if user:
             if str(password) == str(user[3]):
-                #session['logged_in'] = True
-                #session['user_id'] =  user[0]
+                session['logged_in'] = True
+                session['user_id'] =  user[0]
                 return (redirect(("/users/{}").format(user[0])))
             else:
                 return (redirect(url_for('success',name="sahi password de "+
@@ -33,12 +34,14 @@ def new_student():
 
 @app.route('/users/<user_id>')
 def renderHome(user_id):
-    user = findUserByUser_Id(user_id)
-    return render_template("user_home.html",name=user[1],email=user[2],
-                           user_id=user[0],total_balance=user[4],
-                           approved_balance=user[6],unapproved_balance=user[5],
-                           friendList=findFriends(user_id),groupList=findAllGroupsForUser(user_id))
-
+    if session['user_id']== int(user_id):
+        user = findUserByUser_Id(user_id)
+        return render_template("user_home.html",name=user[1],email=user[2],
+                               user_id=user[0],total_balance=user[4],
+                               approved_balance=user[6],unapproved_balance=user[5],
+                               friendList=findFriends(user_id),groupList=findAllGroupsForUser(user_id))
+    else:
+        return redirect('/signIn')
 
 @app.route('/addUser',methods = ['POST','GET'])
 def addUser():
@@ -56,7 +59,8 @@ def addUser():
         finally:
             if verify is not None:
                 user = findUserByEmail(email)
-                print ("hi")
+                session['logged_in'] = True
+                session['user_id'] = user[0]
                 return (redirect(("/users/{}").format(user[0])))
             else:
               return (redirect(url_for('success',name =
