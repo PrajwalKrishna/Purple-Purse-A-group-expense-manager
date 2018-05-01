@@ -69,7 +69,7 @@ def addTransactionToData():
         sender_id = int(request.form['sender'])
         receiver_mail = request.form['receiver']
         receiver_id = findUserByEmail(receiver_mail)[0]
-        amount = int(request.form['amt'])
+        amount = int(request.form['amt'])*-1
         return_value = insertTransaction(name,amount,sender_id,receiver_id)
         if return_value is 1:
             msg = 'success'
