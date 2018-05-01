@@ -172,8 +172,10 @@ def findAllTransactionsForGroup(group_id):
     transactions = []
     conn = create_connection("database.db")
     curr = conn.cursor()
-    curr.execute("SELECT title,amount FROM GROUPTRANSACTIONS WHERE(group_id) IS '{0}'".format(group_id))
-    transactions = curr.fetchall()
+    curr.execute("SELECT * FROM GROUPTRANSACTIONS WHERE(group_id) IS '{0}'".format(group_id))
+    temp = curr.fetchall()
+    for i in temp:
+        transactions.append([[i[1],i[3]],i[0]])
     conn.commit()
     conn.close()
     return transactions
@@ -281,6 +283,14 @@ def payUnequalGroupTransaction(groupTransaction_id):
     for i in members:
         amount = dividends*findShare(groupTransaction_id,i[1])
         insertTransaction(title,amount,i[1],payer_id)
+
+def findAllSharesForGroupTransaction(groupTransaction_id):
+    conn = create_connection("database.db")
+    curr = conn.cursor()
+    curr.execute("SELECT share,user_id FROM SHARES WHERE groupTransaction_id = '{0}'".format(groupTransaction_id))
+    shares = curr.fetchall()
+    conn.close()
+    return shares
 
 def retrieveGroups():
     groups = []

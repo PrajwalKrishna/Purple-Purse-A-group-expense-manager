@@ -42,14 +42,17 @@
 </tr>
 {% for i in transactionList %}
 <tr>
-    {% for j in i %}
-        <td>
-            {{j}}
-        </td>
-    {% endfor %}
+    {% for k in i %}
+    {% if loop.index0==0 %}
+        {% for j in k %}
+            <td>{{j}}</td>
+        {% endfor %}
+    {% else %}
     <td>
-        <a href="/details">details</a>
+        <a href="/renderGroupTransaction/{{k}}">details</a>
     </td>
+    {% endif %}
+    {% endfor %}
 </tr>
 {% endfor %}
 </table>

@@ -19,7 +19,7 @@ def success(name):
 @app.route('/users/<user_id>/userAddTransaction')
 def addTransaction(user_id):
     if session['user_id']== int(user_id):
-        return render_template('addTransaction.html')
+        return render_template('addTransaction.html',user_id = user_id)
     else:
         return redirect('/signIn')
 
@@ -67,7 +67,8 @@ def addTransactionToData():
     if request.method == 'POST':
         name = request.form['nm']
         sender_id = int(request.form['sender'])
-        receiver_id = int(request.form['receiver'])
+        receiver_mail = request.form['receiver']
+        receiver_id = findUserByEmail(receiver_mail)[0]
         amount = int(request.form['amt'])
         return_value = insertTransaction(name,amount,sender_id,receiver_id)
         if return_value is 1:
@@ -145,7 +146,10 @@ def makeGroup():
 
 @app.route('/<group_id>/members/<user_id>')
 def renderMember(group_id,user_id):
-    return redirect(url_for('success',name = group_id+user_id))
+    if session['user_id'] == user_id:
+        return redirect('/users/'+str(user_id))
+    else:
+        return redirect('/signIn')
 
 @app.route('/group/<group_id>')
 def renderGroup(group_id):
@@ -227,13 +231,13 @@ def execGroupTransaction():
                 if j[0]==payer_id:
                     j[2] -= int(amount)
                     break
-
-        print ("Shape of Love")
         k = 1
         total_shares=0
         for i in members:
             include = []
             shares = request.form['share'+str(k)]
+            if not shares:
+                shares = 1
             include = request.form.getlist('member'+str(k))
             i[3] = include
             if include:
@@ -242,7 +246,6 @@ def execGroupTransaction():
                 makeShare(int(shares),groupTransaction_id,i[0])
             k = k + 1
 
-        print ("Shape of You")
         payer_iterator  = 0
         addToGroupTransactionAmount(groupTransaction_id,total_amount)
         dividends = total_amount/total_shares
@@ -253,9 +256,6 @@ def execGroupTransaction():
                 i[2] += dividends * i[1]
             if i[2]>0:
                 while True:
-                    print ("ENter")
-                    print (i)
-                    print (payer_iterator)
                     if i[2] <= int(payer_details[payer_iterator][1]):
                         insertTransaction(title,i[2],int(payer_details[payer_iterator][0][0]),i[0])
                         payer_details[payer_iterator][1] = int(payer_details[payer_iterator][1]) - i[2]
@@ -266,6 +266,24 @@ def execGroupTransaction():
                         payer_iterator += 1
                 addToMembershipAmount(i[0],group_id,i[2])
         return redirect(url_for('success',name = "Happy"))
+    else:
+        return redirect('/signIn')
+
+@app.route('/renderGroupTransaction/<groupTransaction_id>')
+def renderGroupTransaction(groupTransaction_id):
+    payers = findAllPayerForGroupTransaction(groupTransaction_id)
+    group_id = findGroupTransactionById(groupTransaction_id)[2]
+    if verifyGroupLogin(group_id):
+        payerList = []
+        for i in payers:
+            payer = findUserByUser_Id(i[0])
+            payerList.append([payer[1],payer[2],i[1]])
+        customers = findAllSharesForGroupTransaction(groupTransaction_id)
+        shares = []
+        for i in customers:
+            user = findUserByUser_Id(i[1])
+            shares.append([user[1],user[2],i[0]])
+        return render_template('renderGroupTransaction.html',payerList = payerList,customer = shares)
     else:
         return redirect('/signIn')
 

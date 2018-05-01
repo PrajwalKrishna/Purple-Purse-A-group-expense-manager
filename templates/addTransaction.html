@@ -3,13 +3,12 @@
 
       <form action = "{{ url_for('addTransactionToData') }}" method = "POST">
          <h3>Add Transaction</h3>
-         Name<br>
+         Title<br>
          <input type = "text" name = "nm" /></br>
-         sender_id<br>
-         <input type = "text" name = "sender" /></br>
-         receiver_id<br>
-         <input type = "text" name = 'receiver'/></br>
-         amount<br>
+         <input type = "hidden" name = "sender" value = {{user_id}} /><br />
+         Receiver_Email<br>
+         <input type = "email" name = 'receiver'/></br>
+         Amount<br>
          <input type = "text" name = 'amt'/></br>
          <p><input type = "submit" value = "submit" /></p>
       </form>
