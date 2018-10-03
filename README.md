@@ -1,16 +1,13 @@
-# Purple-Purse-A-group-expense-manager
-A beginner's project in python3 which uses flask and sqlite3
+# Purple Purse - A group expense manager
 
-Aim:To create a group expense manager for usage of small groups to share and record expenses like a movie outing followed by dinne
+The aim of this project is to create a **group expense manager** that small groups can use to share and record expenses, like a movie outing followed by a dinner. It is made in Python 3, and uses Flask and SQLite3.
 
-##Features
+## Features
 
-1.Users:
-    a.Users can signup
-    b.Users can signin
-    c.Users can signout
+### Users
 
-2.Dashboard:
-    a.User can see overall balance
-    b.Balances between friends
-ANd several other features
+Users can create an account, sign in and sign out.
+
+### Dashboard
+
+There is a dashboard in which users can see the overall balance, and also the balances between friends. There are several other features too.
