@@ -6,13 +6,13 @@ Project Goal: To create a group expense manager for use in small groups to share
 ## Features
 
 1. Users:
- --* Users can signup
- --* Users can signin
- --* Users can signout
+   * Users can signup
+   * Users can signin
+   * Users can signout
 
 2. Dashboard:
- --* User can see overall balance
- --* Balances between friends
+   * User can see overall balance
+   * Balances between friends
 	
 ## Quickstart
 
